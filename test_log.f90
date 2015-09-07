@@ -1,11 +1,16 @@
+#include "logging.h"
 program test_log
   use logging
 
   implicit none
 
-  call log(LOG_ERROR, "help we had an error")
-  call log(LOG_WARN, "this is a warning")
-  call log(LOG_INFO, "here, have some info")
-  call log(LOG_DEBUG, "and this is a debug message", __FILE__, __LINE__)
-  call log(LOG_TRACE, "also you can sprinkle trace-messages", __FILE__, __LINE__)
+  error "help we had an error"
+  errorf "help we had an error, with filename"
+  warn "this is a warning"
+  warnf "this is a warning with a filename"
+  info "here, have some info"
+  infof "here, have some info with a filename"
+  debug "and this is a debug message"
+  debugf "and this is a debug message with a filename"
+  trace "also you can use trace-messages which print the current file and line"
 end program

@@ -3,28 +3,40 @@ module logging
   use, intrinsic :: iso_fortran_env, only: stdin=>input_unit, &
                                            stdout=>output_unit, &
                                            stderr=>error_unit
+  use :: vt100 ! For color output
   implicit none
-  ! Color setup
-  character(len=*), parameter :: start = achar(27)
-  ! List of logging colors
-  character(len=*), parameter :: reset = "[0m", bold = "[1m"
-  character(len=*), dimension(5), parameter :: color_codes = &
-      ["[31m", "[32m", "[33m", "[34m", "[35m"]
-  character(len=*), parameter :: level_color = "[20m"
 
-  ! Enable or disable date output
-  logical, parameter :: output_date = .true.
+  ! Color to show date and level info in
+  character(len=*), parameter :: level_color = "20"
+  character(len=*), parameter :: date_color = "32"
+
+  ! Log levels
   integer, parameter :: LOG_ERROR = 1, LOG_WARN = 2, LOG_INFO = 3, LOG_DEBUG = 4, LOG_TRACE = 5
-  character(len=*), parameter :: date_color = "[32m"
+
+  ! These are the color codes corresponding to the loglevels above
+  character(len=*), dimension(5), parameter :: color_codes = &
+      ["31", "33", "32", "34", "35"]
+  ! These are the styles corresponding to the loglevels above
+  character(len=*), dimension(5), parameter :: style_codes = &
+      [bold, reset, reset, reset, reset]
 
   logical, parameter :: output_hostname = .true.
   logical, parameter :: output_severity = .true.
+#ifdef LOG_DATE
+  logical, parameter :: output_date = .true.
+#else
+  logical, parameter :: output_date = .false.
+#endif
+
+
+  ! Output to:
+  integer, parameter :: lu = stderr
+
 contains
-  subroutine log(level, msg, filename, linenum)
+  subroutine wll(level, filename, linenum)
     implicit none
     ! Input parameters
     integer                    :: level
-    character(len=*)           :: msg
     character(len=*), optional :: filename
     integer, optional          :: linenum
 
@@ -35,61 +47,70 @@ contains
     character(4)  :: linenum_lj ! left-justified line number
     character(len=100) :: hostname
     integer :: status_value = 0
+    logical :: show_colors = .false.
+    logical :: t
+    t = .true.
 
+    show_colors = isatty(lu) ! This works in ifort and gfortran
+    ! Reset the colors if needed
+    if (show_colors) call tput(lu, reset)
 
-    ! Write date and time if needed
+    ! Write date and time if wanted
     if (output_date) then
+      if (show_colors) call tput(lu, date_color)
       call date_and_time(date, time, zone)
-      ! Set up color for date
-      write(stderr, '(a,a)', advance="no") start, date_color
-      write(stderr, '(a,"/",a,"/",a," ",a,":",a,":",a," ")', advance="no") date(1:4), date(5:6), date(7:8), &
+      write(lu, '(a,"/",a,"/",a," ",a,":",a,":",a," ")', advance="no") date(1:4), date(5:6), date(7:8), &
           time(1:2), time(3:4), time(5:6)
-      ! Reset color
-      write(stderr, '(a,a)', advance="no") start, reset
+      if (show_colors) call tput(lu, reset)
     endif
 
     ! Write hostname if needed and found (does not work yet)
     if (output_hostname) then
-      call get_environment_variable("HOSTNAME",hostname, status=status_value)
-      if (status_value .eq. 0) then ! If it fits in 100 characters and exists
-        write(stderr, '(a," ")', advance="no") trim(hostname)
-      endif
+      call hostnm(hostname)
+      write(lu, '(a," ")', advance="no") trim(hostname)
     endif
 
     ! Output severity level
     if (output_severity) then
-      write(stderr, '(a,a)', advance="no") start, level_color
+      if (show_colors) call tput(lu, level_color)
       if (level .eq. LOG_ERROR) then
-        write(*, "(a)", advance="no") "ERROR "
+        if (show_colors) then
+          call tput(lu, bold)
+          call tput(lu, color_codes(level)) ! error has the same color, for reading convenience
+        endif
+        write(lu, "(a)", advance="no") "ERROR"
       elseif (level .eq. LOG_WARN) then
-        write(*, "(a)", advance="no") "WARN  "
+        if (show_colors) then
+          call tput(lu, bold)
+        endif
+        write(lu, "(a)", advance="no") "WARN "
       elseif (level .eq. LOG_INFO) then
-        write(*, "(a)", advance="no") "INFO  "
+        write(lu, "(a)", advance="no") "INFO "
       elseif (level .eq. LOG_DEBUG) then
-        write(*, "(a)", advance="no") "DEBUG "
+        write(lu, "(a)", advance="no") "DEBUG"
       elseif (level .eq. LOG_TRACE) then
-        write(*, "(a)", advance="no") "TRACE "
+        write(lu, "(a)", advance="no") "TRACE"
       endif
-      write(stderr, "(a,a)", advance="no") start, reset
+      if (show_colors) call tput(lu, reset)
     endif
 
     if (present(filename)) then
-      write(stderr, "(a)", advance="no") filename
+      if (show_colors) call tput(lu, bold)
+      write(stderr, "(' ',a)", advance="no") filename
+      if (show_colors) call tput(lu, reset)
     endif
 
     if (present(linenum)) then
       ! Left-justify the line number and cap it to 4 characters
       write(linenum_lj, '(i4)') linenum
-      write(stderr, "(':',a,' ')", advance="no") adjustl(linenum_lj)
+      write(lu, "(':',a)", advance="no") adjustl(linenum_lj)
     endif
 
     ! Set color based on severity level
-    write(stderr, "(a,a)", advance="no") start, color_codes(level)
-
-    ! Write the log message
-    write(stderr, "(a)", advance="no") msg
-
-    ! Finish the line and unset the color
-    write(stderr, "(a,a)") start, reset
-  end subroutine log
+    if (show_colors) then
+      ! Set bold for errors (must go first, resets the color code otherwise)
+      call tput(lu, style_codes(level))
+      call tput(lu, color_codes(level))
+    endif
+  end subroutine wll
 end module logging
