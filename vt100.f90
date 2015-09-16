@@ -16,4 +16,12 @@ module vt100
       integer, intent(in) :: lu
       write(lu, '(a,"[",a,"m")', advance="no") start, code
     end subroutine tput
+    subroutine stput(str, code)
+      implicit none
+      character(len=*), intent(inout) :: str
+      character(len=*), intent(in)    :: code
+      character(len=10) :: tmp
+      write(tmp, '(a,"[",a,"m")') start, code
+      str = str // trim(tmp)
+    end subroutine stput
 end module vt100
