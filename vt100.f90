@@ -20,8 +20,6 @@ module vt100
       implicit none
       character(len=*), intent(inout) :: str
       character(len=*), intent(in)    :: code
-      character(len=10) :: tmp
-      write(tmp, '(a,"[",a,"m")') start, code
-      str = str // trim(tmp)
+      str = trim(str) // start // "[" // trim(code) // "m"
     end subroutine stput
 end module vt100

@@ -10,6 +10,8 @@ program test_log
   log(warn,*) "this is a warning with a filename"
   log(info,*) "here, have some info with a filename"
   log(debug,*) "and this is a debug message"
+  log(crit,*) "help we had an error"
+  log(err,*) "this is a warning"
 
   ! Enable date output
   call set_default_output_date(.true.)
