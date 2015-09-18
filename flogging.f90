@@ -1,4 +1,16 @@
-module logging
+!**************************************************************
+! Copyright Daan van Vugt
+!
+! See README for usage information.
+!
+! This module contains a logging system intended for use in MPI
+! simulations, with facilities for colored output, log level
+! filters and date annotation.
+!
+! This software is governed by the X11 license, found in the
+! file LICENSE.
+!**************************************************************
+module flogging
   use :: vt100 ! For color output
 
 #ifdef f2003
@@ -22,15 +34,17 @@ module logging
   integer :: logu = stderr
 
   ! Default settings for hostname and severity output
-  logical :: default_output_hostname = .true.
-  logical :: default_output_severity = .true.
-  logical :: default_output_date     = .false.
-  logical :: default_output_fileline = .true.
+  logical, save :: default_output_hostname = .true.
+  logical, save :: default_output_severity = .true.
+  logical, save :: default_output_date     = .false.
+  logical, save :: default_output_fileline = .true.
 #ifdef DEBUG
-  integer :: default_log_level = 5
+  integer, save :: default_log_level = 5
 #else
-  integer :: default_log_level = 4
+  integer, save :: default_log_level = 4
 #endif
+  logical, save :: skip_terminal_check = .false.
+  logical, save :: disable_colors = .false.
 
   ! These are the color codes corresponding to the loglevels above
   character(len=*), dimension(5), parameter :: color_codes = &
@@ -45,48 +59,60 @@ module logging
 contains
   !**** Settings functions
   !> This routine redirects logging output to another unit (for output to file)
-  subroutine set_log_unit(unit)
+  subroutine log_set_unit(unit)
     implicit none
     integer, intent(in) :: unit
     logu = unit
-  end subroutine set_log_unit
+  end subroutine log_set_unit
 
   !> Set the default for hostname output
-  subroutine set_default_output_hostname(bool)
+  subroutine log_set_default_output_hostname(bool)
     implicit none
     logical, intent(in) :: bool
     default_output_hostname = bool
-  end subroutine set_default_output_hostname
+  end subroutine log_set_default_output_hostname
 
   !> Set the default for severity output
-  subroutine set_default_output_severity(bool)
+  subroutine log_set_default_output_severity(bool)
     implicit none
     logical, intent(in) :: bool
     default_output_severity = bool
-  end subroutine set_default_output_severity
+  end subroutine log_set_default_output_severity
 
   !> Set the default for date output
-  subroutine set_default_output_date(bool)
+  subroutine log_set_default_output_date(bool)
     implicit none
     logical, intent(in) :: bool
     default_output_date = bool
-  end subroutine set_default_output_date
+  end subroutine log_set_default_output_date
 
   !> Set the default for file/line output
-  subroutine set_default_output_fileline(bool)
+  subroutine log_set_default_output_fileline(bool)
     implicit none
     logical, intent(in) :: bool
     default_output_fileline = bool
-  end subroutine set_default_output_fileline
+  end subroutine log_set_default_output_fileline
 
   !> Set the minimum log level to display
-  subroutine set_default_log_level(level)
+  subroutine log_set_default_log_level(level)
     implicit none
     integer, intent(in) :: level
     default_log_level = level
-  end subroutine set_default_log_level
+  end subroutine log_set_default_log_level
 
+  !> Whether or not to skip the terminal check
+  subroutine log_set_skip_terminal_check(bool)
+    implicit none
+    logical, intent(in) :: bool
+    skip_terminal_check = bool
+  end subroutine log_set_skip_terminal_check
 
+  !> Disable colors altogether
+  subroutine log_set_disable_colors(bool)
+    implicit none
+    logical, intent(in) :: bool
+    disable_colors = bool
+  end subroutine log_set_disable_colors
 
 
   !**** Logging functions
@@ -101,7 +127,9 @@ contains
     integer, intent(in), optional :: only_n    !< Whether to show this message regardless of originating thread
     logical                       :: logp      !< Output: true if this log message can be printed
 
+#ifdef USE_MPI
     integer :: rank, ierr
+#endif
 
     if (level .le. default_log_level) logp = .true.
 #ifdef USE_MPI
@@ -137,9 +165,12 @@ contains
     if (level .gt. default_log_level .or. level .gt. 5) return
 
     ! only show colors if we are outputting to a terminal
-    show_colors = isatty(stdout) ! This works in ifort and gfortran (log_unit here because log_lead is an internal string)
-    show_colors = .true.
-    ! XXX does not check log_unit since this fails for stderr
+    if (skip_terminal_check) then
+      show_colors = .not. disable_colors
+    else
+      show_colors = isatty(stdout) .and. .not. disable_colors
+    endif
+    ! This works in ifort and gfortran (log_unit here because log_lead is an internal string)
     ! TODO check color override CLI flag
 
     ! Initialize log_tmp
@@ -175,14 +206,14 @@ contains
         log_tmp(i) = trim(log_tmp(i)) // ":" // adjustl(linenum_lj)
       endif
       ! How many extra spaces are needed to fill out to multiple of n characters
-      fn_len = len_trim(log_tmp(i))
+      fn_len = fn_len + len_trim(log_tmp(i))
       i = i+1
     endif
 
     ! Output severity level
     if (default_output_severity) then
       fn_len = fn_len + len_trim(log_severity(level, .false.))
-      log_tmp(i) = trim(log_tmp(i)) // spaces(mod(9-fn_len,10)+10) // log_severity(level, show_colors)
+      log_tmp(i) = trim(log_tmp(i)) // spaces(mod(7-fn_len,8)+8) // log_severity(level, show_colors)
       i = i + 1
     endif
 
@@ -274,4 +305,4 @@ contains
     write(log_date, '(a,"/",a,"/",a," ",a,":",a,":",a," ")') date(1:4), date(5:6), date(7:8), &
         time(1:2), time(3:4), time(5:6)
   end function log_date
-end module logging
+end module flogging

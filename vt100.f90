@@ -1,6 +1,7 @@
 !> This module sets terminal colors, boldness and other settings
 !! Using ANSI/VT100 control sequences
 !! See http://misc.flogisoft.com/bash/tip_colors_and_formatting for a list of sequences
+!! This code is governed by the X11 license. See LICENSE for details.
 module vt100
   implicit none
   ! Control start character
