@@ -47,40 +47,40 @@ outputs
 ## Advanced usage
 Logging is to stderr by default. Another output unit can be selected by calling
 ```
-  set_log_unit(unit)
+  log_set_unit(unit)
 ```
 
 By default, the hostname of the current computer is shown in the log. This can be
 enabled/disabled by calling
 ```
-  set_default_output_hostname(bool)
+  log_set_default_output_hostname(bool)
 ```
 Whether or not to output the severity level (default=.true.) can be set with
 ```
-  set_default_output_severity(bool)
+  log_set_default_output_severity(bool)
 ```
 By default, the current date and time are not shown. This can be enabled/disabled with
 ```
-  set_default_output_date(bool)
+  log_set_default_output_date(bool)
 ```
 By default, the current filename and linenumber are shown. This can be disabled/enabled with
 ```
-  set_default_output_fileline(bool)
+  log_set_default_output_fileline(bool)
 ```
 The default lowest log level shown is INFO, or DEBUG if compiled with -DDEBUG. This can be
 changed with
 ```
-  set_default_log_level(level)
+  log_set_default_log_level(level)
 ```
 ### Colors
 By default, colors are used if stdout is connected to a terminal (the check fails with stderr on gfortran at least)
 This can be disabled by calling
 ```
-  set_disable_colors(bool)
+  log_set_disable_colors(bool)
 ```
 The check for stdout being a terminal can be disabled by calling
 ```
-  set_skip_terminal_check(bool)
+  log_set_skip_terminal_check(bool)
 ```
 
 ## Internals
