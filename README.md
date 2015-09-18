@@ -26,6 +26,7 @@ endif
 Note that it is not possible to use the filename and linenumber features then.
 
 ## Examples
+Compiling the below code without `-DDEBUG`
 ```
 log(crit,*) "help we had a critical error"
 log(err,*) "this is an error"
@@ -33,6 +34,15 @@ log(warn,*) "this is a warning"
 log(info,*) "here, have some info"
 log(debug,*) "and this is a debug message"
 ```
+outputs
+```
+ localhost test.f90:8      CRITICAL help we had a critical error
+ localhost test.f90:9         ERROR this is an error
+ localhost test.f90:10         WARN this is a warning
+ localhost test.f90:11         INFO here, have some info
+```
+(The leading space is a consequence of using the fortran * format specifier)
+
 
 ## Advanced usage
 Logging is to stderr by default. Another output unit can be selected by calling

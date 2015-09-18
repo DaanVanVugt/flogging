@@ -5,11 +5,12 @@ program test_log
   implicit none
   ! This is an example program showing logging with different levels, filenames and mpi
 
-  log(crit,*) "help we had an error"
-  log(err,*) "this is a warning"
-  log(warn,*) "this is a warning with a filename"
-  log(info,*) "here, have some info with a filename"
+  log(crit,*) "help we had a critical error"
+  log(err,*) "this is an error"
+  log(warn,*) "this is a warning"
+  log(info,*) "here, have some info"
   log(debug,*) "and this is a debug message"
+
   log(debug,*) "and this is a debug message 2"
   log(crit,*) "help we had an error"
   log(err,*) "this is a warning"

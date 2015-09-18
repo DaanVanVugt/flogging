@@ -131,6 +131,7 @@ contains
     integer :: rank, ierr
 #endif
 
+    logp = .false.
     if (level .le. default_log_level) logp = .true.
 #ifdef USE_MPI
     if (logp .and. present(only_n)) then
