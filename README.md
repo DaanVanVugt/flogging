@@ -4,7 +4,7 @@ while providing some convenient extra features not present in fortran by default
 
 Usage is very simple:
 ```
-use logging
+use flogging
 ```
 
 To load the logging module and its utility functions.
