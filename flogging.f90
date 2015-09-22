@@ -45,6 +45,7 @@ module flogging
 #endif
   logical, save :: skip_terminal_check = .false.
   logical, save :: disable_colors = .false.
+  logical, save :: log_cla_checked = .false.
 
   ! These are the color codes corresponding to the loglevels above
   character(len=*), dimension(5), parameter :: color_codes = &
@@ -114,6 +115,11 @@ contains
     disable_colors = bool
   end subroutine log_set_disable_colors
 
+  !> Disable reading arguments from the commandline
+  subroutine log_disable_cli_arguments()
+    implicit none
+    log_cla_checked = .true.
+  end subroutine
 
   !**** Logging functions
   !> Output this log statement or not
@@ -160,8 +166,10 @@ contains
     logical :: show_colors = .false.
     i = 1
 
+    ! Check command-line arguments if that has not been done yet
+    if (.not. log_cla_checked) call log_check_cli_arguments()
+
     ! Set level to 1 if it is too low, skip if too high
-    ! TODO check verbose cli flag
     if (level .lt. 1) level = 1
     if (level .gt. default_log_level .or. level .gt. 5) return
 
@@ -171,8 +179,7 @@ contains
     else
       show_colors = isatty(stdout) .and. .not. disable_colors
     endif
-    ! This works in ifort and gfortran (log_unit here because log_lead is an internal string)
-    ! TODO check color override CLI flag
+    ! This works in ifort and gfortran (log_unit is stdout here because log_lead is an internal string)
 
     ! Initialize log_tmp
     log_tmp = ""
@@ -215,7 +222,6 @@ contains
     if (default_output_severity) then
       fn_len = fn_len + len_trim(log_severity(level, .false.))
       log_tmp(i) = trim(log_tmp(i)) // spaces(mod(7-fn_len,8)+8) // log_severity(level, show_colors)
-      i = i + 1
     endif
 
     ! Set color based on severity level
@@ -306,4 +312,26 @@ contains
     write(log_date, '(a,"/",a,"/",a," ",a,":",a,":",a," ")') date(1:4), date(5:6), date(7:8), &
         time(1:2), time(3:4), time(5:6)
   end function log_date
+
+  !> Check the command-line arguments to find the default logging level
+  !! and color settings.
+  !! TODO: use cla.f90 or something similar for better compatibility
+  subroutine log_check_cli_arguments()
+    implicit none
+
+    integer :: i,length,status
+    character(len=32) :: arg
+    
+    ! Loop over all command-line arguments to look for -v
+    do i=1,command_argument_count()
+      call get_command_argument(i,arg,length,status)
+      if (status .eq. 0) then
+        if (trim(arg) .eq. "-v" .or. trim(arg) .eq. "--verbose") default_log_level = min(5,default_log_level+1)
+        if (trim(arg) .eq. "-q" .or. trim(arg) .eq. "--quiet"  ) default_log_level = max(1,default_log_level-1)
+        if (trim(arg) .eq. "--force-colors") skip_terminal_check = .true.
+        if (trim(arg) .eq. "--no-colors") disable_colors = .true.
+      endif
+    enddo
+    log_cla_checked = .true.
+  end subroutine log_check_cli_arguments
 end module flogging

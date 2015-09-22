@@ -43,6 +43,15 @@ outputs
 ```
 (The leading space is a consequence of using the fortran * format specifier)
 
+## Command-line flags
+The logging module allows the following command-line flags, checked at the time of the first log output.
+`./test -v` or `./test --verbose` increases the log level by 1. Multiple calls increase the loglevel by 1 every time,
+as in `./test -v -v`. Making the output less verbose can be done by using the `-q` flag, or `-quiet`, as in
+`./test -q`, `./test -q -q` or `./test --quiet`.
+
+Checking whether the log output is a terminal can be skipped by calling
+`./test --force-colors`, while `./test --no-colors` disables colors altogether.
+`--no-colors` takes precedence, so specifying both on the command-line means that the output will not contain colors.
 
 ## Advanced usage
 Logging is to stderr by default. Another output unit can be selected by calling
