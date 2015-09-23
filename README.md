@@ -102,8 +102,3 @@ also available as `LOG_CRITICAL`, `LOG_ERROR`, `LOG_WARNING`, `LOG_INFO` and `LO
 The logp function can also be used with MPI support, using an optional integer parameter `only_n` to return true
 only if the level is sufficient and the MPI rank of the current thread is equal to `only_n`.
 This can be used to print messages only from the root thread, to prevent log messages from being printed N times.
-
-
-## Improvements
-- Check the arguments for the presence of `-v`, `-vv` etc to increase the log level by one each time
-- Check a color override cli flag to disable colors / skip the terminal check
