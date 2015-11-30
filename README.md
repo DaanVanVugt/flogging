@@ -101,4 +101,15 @@ where level is one of `crit`, `err`, `warn`, `info` or `debug` (provided by the 
 also available as `LOG_CRITICAL`, `LOG_ERROR`, `LOG_WARNING`, `LOG_INFO` and `LOG_DEBUG` in the case of namespace collision.
 The logp function can also be used with MPI support, using an optional integer parameter `only_n` to return true
 only if the level is sufficient and the MPI rank of the current thread is equal to `only_n`.
-This can be used to print messages only from the root thread, to prevent log messages from being printed N times.
+This can be used to print messages only from the root thread, to prevent log messages from being printed N times as shown below.
+```
+  logp(level,0)
+```
+
+## Installation
+Copy the files flogging.f90, vt100.f90 and logging.h into your project.
+In your files, place
+```
+#include "logging.h"
+```
+and ```use flogging```.
