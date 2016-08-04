@@ -1,5 +1,34 @@
-test : flogging.f90 test.f90 vt100.f90 logging.h
-	mpifort -Wall -cpp vt100.f90 flogging.f90 test.f90 -o test
+# Builds flogging as a shared library
 
-test_mpi : flogging.f90 test_mpi.f90 vt100.f90 logging.h
-	mpifort -Wall -cpp -DUSE_MPI vt100.f90 flogging.f90 test_mpi.f90 -o test_mpi
+F90=.f90
+OBJ=.o
+LIB = libflogging.so
+SRC = src
+BUILD = $(SRC)
+
+
+FC = mpif90
+FLAGS = -fpic -O3 -cpp -ffree-line-length-none
+
+ifeq (USE_MPI,1)
+	FLAGS += -DUSE_MPI
+endif
+
+SOURCES = $(wildcard $(SRC)/*$(F90))
+OBJS = $(patsubst $(SRC)/%$(F90), $(BUILD)/%$(OBJ), $(SOURCES))
+
+$(LIB): $(OBJS)
+	$(FC) -shared -o $(LIB) $(OBJS)
+
+$(BUILD)/%$(OBJ): $(SRC)/%$(F90)
+	$(FC) $(FLAGS) -c $< -o $@
+
+$(BUILD)/flogging.o: $(BUILD)/vt100.o
+
+# Some test executables
+#
+test : src/flogging.f90 tests/test.f90 src/vt100.f90 include/flogging.h
+	mpifort $(FLAGS) -Iinclude src/vt100.f90 src/flogging.f90 tests/test.f90 -o test
+
+test_mpi : src/flogging.f90 tests/test_mpi.f90 src/vt100.f90 include/flogging.h
+	mpifort $(FLAGS) -DUSE_MPI -Iinclude src/vt100.f90 src/flogging.f90 tests/test_mpi.f90 -o test_mpi

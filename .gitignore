@@ -1,1 +1,6 @@
 .fuse_hidden*
+*.o
+*.so
+test
+test_mpi
+*.mod

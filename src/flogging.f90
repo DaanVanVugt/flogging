@@ -4,10 +4,10 @@
 ! See README for usage information.
 !
 ! This module contains a logging system intended for use in MPI
-! simulations, with facilities for colored output, log level
-! filters and date annotation.
+! codes, with facilities for colored output, log level filters,
+! code location and date and time annotation.
 !
-! This software is governed by the X11 license, found in the
+! This software is governed by the MIT license, found in the
 ! file LICENSE.
 !**************************************************************
 module flogging
@@ -24,82 +24,84 @@ module flogging
   implicit none
 
   ! Log levels
-  integer, parameter :: LOG_CRITICAL = 1, crit = 1,&
-                        LOG_ERROR    = 2, err  = 2,&
-                        LOG_WARNING  = 3, warn = 3,&
-                        LOG_INFO     = 4, info = 4,&
-                        LOG_DEBUG    = 5, debug= 5
+  integer, public, parameter :: NUM_LOG_LEVELS = 6
+  integer, public, parameter :: LOG_FATAL = 1,& !< Runtime error causing termination
+                                LOG_ERROR = 2,& !< Runtime error
+                                LOG_WARN  = 3,& !< Warning, but we can continue
+                                LOG_INFO  = 4,& !< Interesting events
+                                LOG_DEBUG = 5,& !< Detailed debug output, disable by compiling your program with -DDISABLE_LOG_DEBUG
+                                LOG_TRACE = 6   !< Extremely detailed output, compile your program with -DENABLE_LOG_TRACE
 
-  ! By default, log to stderr
-  integer :: logu = stderr
+  integer, public, save :: logu = stderr ! By default, log to stderr
+  integer, public, save :: minimum_log_level   = 4 !< Note that more critical means a lower number
 
+
+  public :: log_set_output_hostname
+  public :: log_set_output_severity
+  public :: log_set_output_date
+  public :: log_set_output_time
+  public :: log_set_output_fileline
+  public :: log_set_skip_terminal_check
+  public :: log_set_disable_colors
+  public :: log_disable_cli_arguments
+
+  public :: logp, logl
+
+
+
+
+  private
   ! Default settings for hostname and severity output
-  logical, save :: default_output_hostname = .true.
-  logical, save :: default_output_severity = .true.
-  logical, save :: default_output_date     = .false.
-  logical, save :: default_output_fileline = .true.
-#ifdef DEBUG
-  integer, save :: default_log_level = 5
-#else
-  integer, save :: default_log_level = 4
-#endif
+  logical, save :: output_hostname     = .false.
+  logical, save :: output_severity     = .true.
+  logical, save :: output_date         = .false.
+  logical, save :: output_time         = .false.
+  logical, save :: output_fileline     = .true.
   logical, save :: skip_terminal_check = .false.
-  logical, save :: disable_colors = .false.
-  logical, save :: log_cla_checked = .false.
+  logical, save :: disable_colors      = .false.
+  logical, save :: cla_checked         = .false. 
 
   ! These are the color codes corresponding to the loglevels above
-  character(len=*), dimension(5), parameter :: color_codes = &
-      ["31", "31", "33", "32", "34"]
+  character(len=*), dimension(NUM_LOG_LEVELS), parameter :: color_codes = &
+      ["31", "31", "33", "32", "34", "30"]
   ! These are the styles corresponding to the loglevels above
-  character(len=*), dimension(5), parameter :: style_codes = &
-      [bold, reset, reset, reset, reset]
+  character(len=*), dimension(NUM_LOG_LEVELS), parameter :: style_codes = &
+      [bold, reset, reset, reset, reset, reset]
 
   ! Colors for other output
   character(len=*), parameter :: level_color = "20"
 
 contains
-  !**** Settings functions
-  !> This routine redirects logging output to another unit (for output to file)
-  subroutine log_set_unit(unit)
-    implicit none
-    integer, intent(in) :: unit
-    logu = unit
-  end subroutine log_set_unit
-
+  !**** Settings functions (public)
   !> Set the default for hostname output
-  subroutine log_set_default_output_hostname(bool)
-    implicit none
+  subroutine log_set_output_hostname(bool)
     logical, intent(in) :: bool
-    default_output_hostname = bool
-  end subroutine log_set_default_output_hostname
+    output_hostname = bool
+  end subroutine log_set_output_hostname
 
   !> Set the default for severity output
-  subroutine log_set_default_output_severity(bool)
-    implicit none
+  subroutine log_set_output_severity(bool)
     logical, intent(in) :: bool
-    default_output_severity = bool
-  end subroutine log_set_default_output_severity
+    output_severity = bool
+  end subroutine log_set_output_severity
 
   !> Set the default for date output
-  subroutine log_set_default_output_date(bool)
-    implicit none
+  subroutine log_set_output_date(bool)
     logical, intent(in) :: bool
-    default_output_date = bool
-  end subroutine log_set_default_output_date
+    output_date = bool
+  end subroutine log_set_output_date
+
+  !> Set time-only date format
+  subroutine log_set_output_time(bool)
+    logical, intent(in) :: bool
+    output_time = bool
+  end subroutine log_set_output_time
 
   !> Set the default for file/line output
-  subroutine log_set_default_output_fileline(bool)
-    implicit none
+  subroutine log_set_output_fileline(bool)
     logical, intent(in) :: bool
-    default_output_fileline = bool
-  end subroutine log_set_default_output_fileline
-
-  !> Set the minimum log level to display
-  subroutine log_set_default_log_level(level)
-    implicit none
-    integer, intent(in) :: level
-    default_log_level = level
-  end subroutine log_set_default_log_level
+    output_fileline = bool
+  end subroutine log_set_output_fileline
 
   !> Whether or not to skip the terminal check
   subroutine log_set_skip_terminal_check(bool)
@@ -118,10 +120,14 @@ contains
   !> Disable reading arguments from the commandline
   subroutine log_disable_cli_arguments()
     implicit none
-    log_cla_checked = .true.
+    cla_checked = .true.
   end subroutine
 
-  !**** Logging functions
+
+
+
+
+  !**** Logging functions (public)
   !> Output this log statement or not
   function logp(level, only_n)
 #ifdef USE_MPI
@@ -130,15 +136,18 @@ contains
     implicit none
 
     integer, intent(in)           :: level     !< The log level of the current message
-    integer, intent(in), optional :: only_n    !< Whether to show this message regardless of originating thread
+    integer, intent(in), optional :: only_n    !< Show only if the current mpi rank equals only_n
     logical                       :: logp      !< Output: true if this log message can be printed
 
 #ifdef USE_MPI
     integer :: rank, ierr
 #endif
 
-    logp = .false.
-    if (level .le. default_log_level) logp = .true.
+    if (level .le. minimum_log_level) then
+      logp = .true.
+    else
+      logp = .false.
+    endif
 #ifdef USE_MPI
     if (logp .and. present(only_n)) then
       call MPI_COMM_RANK(MPI_COMM_WORLD, rank, ierr)
@@ -148,11 +157,11 @@ contains
   end function logp
 
   !> Write a log lead containing level and optional info
-  !! The name is shortened to allow for longer log messages without needing continuations
+  !> The name is shortened to allow for longer log messages without needing continuations
   function logl(level, filename, linenum)
     implicit none
     ! Input parameters
-    integer                    :: level    !< The log level, between 1 and 5
+    integer                    :: level    !< The log level
     character(len=*), optional :: filename !< An optional filename to add to the log lead
     integer, optional          :: linenum  !< With line number
     character(len=300)         :: logl     !< The output log leader
@@ -167,11 +176,11 @@ contains
     i = 1
 
     ! Check command-line arguments if that has not been done yet
-    if (.not. log_cla_checked) call log_check_cli_arguments()
+    if (.not. cla_checked) call log_check_cli_arguments()
 
     ! Set level to 1 if it is too low, skip if too high
     if (level .lt. 1) level = 1
-    if (level .gt. default_log_level .or. level .gt. 5) return
+    if (level .gt. minimum_log_level .or. level .gt. NUM_LOG_LEVELS) return
 
     ! only show colors if we are outputting to a terminal
     if (skip_terminal_check) then
@@ -189,13 +198,13 @@ contains
     if (show_colors) call stput(log_tmp(i), reset) ! Do not increment i to add it before the next space
 
     ! Write date and time if wanted
-    if (default_output_date) then
-      log_tmp(i) = trim(log_tmp(i)) // log_date()
+    if (output_date .or. output_time) then
+      log_tmp(i) = trim(log_tmp(i)) // log_datetime()
       i = i + 1
     endif
 
     ! Write hostname if requested
-    if (default_output_hostname) then
+    if (output_hostname) then
       log_tmp(i) = trim(log_tmp(i)) // log_hostname()
       i = i + 1
     endif
@@ -206,7 +215,7 @@ contains
     i = i + 1
 #endif
 
-    if (present(filename) .and. default_output_fileline) then
+    if (present(filename) .and. output_fileline) then
       log_tmp(i) = trim(log_tmp(i)) // trim(filename)
       if (present(linenum)) then
         ! Left-justify the line number and cap it to 4 characters
@@ -219,7 +228,7 @@ contains
     endif
 
     ! Output severity level
-    if (default_output_severity) then
+    if (output_severity) then
       fn_len = fn_len + len_trim(log_severity(level, .false.))
       log_tmp(i) = trim(log_tmp(i)) // spaces(mod(7-fn_len,8)+8) // log_severity(level, show_colors)
     endif
@@ -241,7 +250,7 @@ contains
 
 
 
-  !*** Utility functions
+  !*** Utility functions (private)
   !> Return the hostname in a 50 character string
   function log_hostname()
     implicit none
@@ -249,6 +258,7 @@ contains
     call hostnm(log_hostname)
   end function log_hostname
 
+  !> Return n spaces
   function spaces(n)
     implicit none
     integer, intent(in) :: n !< Maximum is 30
@@ -265,21 +275,23 @@ contains
 
     log_severity = ""
     if (show_colors) call stput(log_severity, level_color)
-    if (level .eq. LOG_CRITICAL) then
+    if (level .eq. LOG_FATAL) then
       if (show_colors) then
         call stput(log_severity, bold)
         call stput(log_severity, color_codes(level)) ! error has the same color, for reading convenience
       endif
-      log_severity = trim(log_severity) // "CRITICAL"
+      log_severity = trim(log_severity) // "FATAL"
     elseif (level .eq. LOG_ERROR) then
       if (show_colors) call stput(log_severity, bold)
       log_severity = trim(log_severity) // "ERROR"
-    elseif (level .eq. LOG_WARNING) then
+    elseif (level .eq. LOG_WARN) then
       log_severity = trim(log_severity) // "WARN"
     elseif (level .eq. LOG_INFO) then
       log_severity = trim(log_severity) // "INFO"
     elseif (level .eq. LOG_DEBUG) then
       log_severity = trim(log_severity) // "DEBUG"
+    elseif (level .eq. LOG_TRACE) then
+      log_severity = trim(log_severity) // "TRACE"
     endif
     if (show_colors) call stput(log_severity, reset)
   end function log_severity
@@ -290,32 +302,46 @@ contains
     use mpi
     implicit none
     character(50) :: log_mpi_id    !< The mpi id part of a log
-    character(6)  :: mpi_id_lj     ! Left-justified mpi id
-    integer :: rank, ierr
+    character(6)  :: mpi_id_lj     !< MPI id in string
+    character(4)  :: id_fmt        !< The forhmat to print mpi_id_lj in
+    integer :: rank, n_cpu, ierr
 
     call MPI_COMM_RANK(MPI_COMM_WORLD, rank, ierr)
-    write(mpi_id_lj,'(i4)') rank
-    write(log_mpi_id, '("#",a)') trim(adjustl(mpi_id_lj))
+    call MPI_COMM_SIZE(MPI_COMM_WORLD, n_cpu, ierr)
+    if (n_cpu .eq. 1) then
+      log_mpi_id = ""
+    else
+      write(id_fmt, '(A,i1,A)') "(i", ceiling(log10(real(n_cpu))), ")"
+      write(mpi_id_lj,id_fmt) rank
+      write(log_mpi_id, '("#",a)') trim(adjustl(mpi_id_lj))
+    endif
   end function log_mpi_id
 #endif
 
   !> Return the current date, formatted nicely
-  function log_date()
+  function log_datetime()
     implicit none
-    character(50) :: log_date !< Output the date here
+    character(50) :: log_datetime !< Output the date here
 
     character(8)  :: date
     character(10) :: time
     character(5)  :: zone
 
     call date_and_time(date, time, zone)
-    write(log_date, '(a,"/",a,"/",a," ",a,":",a,":",a," ")') date(1:4), date(5:6), date(7:8), &
-        time(1:2), time(3:4), time(5:6)
-  end function log_date
+    if (output_date .and. output_time) then
+      write(log_datetime, '(a,"/",a,"/",a," ",a,":",a,":",a," ")') date(1:4), date(5:6), date(7:8), &
+            time(1:2), time(3:4), time(5:6)
+    endif
+    if (output_time) then
+      write(log_datetime, '(a,":",a,":",a," ")') time(1:2), time(3:4), time(5:6)
+    endif
+    if (output_date) then
+      write(log_datetime, '(a,"/",a,"/",a," ")') date(1:4), date(5:6), date(7:8)
+    endif
+  end function log_datetime
 
-  !> Check the command-line arguments to find the default logging level
-  !! and color settings.
-  !! TODO: use cla.f90 or something similar for better compatibility
+  !> Check the command-line arguments to set the default logging level
+  !> and color settings.
   subroutine log_check_cli_arguments()
     implicit none
 
@@ -326,12 +352,28 @@ contains
     do i=1,command_argument_count()
       call get_command_argument(i,arg,length,status)
       if (status .eq. 0) then
-        if (trim(arg) .eq. "-v" .or. trim(arg) .eq. "--verbose") default_log_level = min(5,default_log_level+1)
-        if (trim(arg) .eq. "-q" .or. trim(arg) .eq. "--quiet"  ) default_log_level = max(1,default_log_level-1)
-        if (trim(arg) .eq. "--force-colors") skip_terminal_check = .true.
-        if (trim(arg) .eq. "--no-colors") disable_colors = .true.
+        select case (trim(arg))
+          case ("-v")
+            minimum_log_level = min(NUM_LOG_LEVELS,minimum_log_level+1)
+          case ("--verbose")
+            minimum_log_level = min(NUM_LOG_LEVELS,minimum_log_level+1)
+          case ("-q")
+            minimum_log_level = max(1,minimum_log_level-1)
+          case ("--quiet")
+            minimum_log_level = max(1,minimum_log_level-1)
+          case ("--log-output-hostname")
+            output_hostname = .true.
+          case ("--log-force-colors")
+            skip_terminal_check = .true.
+          case ("--log-no-colors")
+            disable_colors = .true.
+          case ("--log-output-date")
+            output_date = .true.
+          case ("--log-output-time")
+            output_time = .true.
+        end select
       endif
     enddo
-    log_cla_checked = .true.
+    cla_checked = .true.
   end subroutine log_check_cli_arguments
 end module flogging
