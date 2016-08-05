@@ -1,4 +1,5 @@
 /* This code is governed by the MIT license. See LICENSE for details. */
+/* The lines below have little spacing to ease the fortran line-length requirements */
 
 /* Log level constants */
 #define LOG_LEVEL_FATAL_DEF 1
@@ -8,39 +9,32 @@
 #define LOG_LEVEL_DEBUG_DEF 5 
 #define LOG_LEVEL_TRACE_DEF 6 
 
-/* The lines below have little spacing to ease the fortran line-length requirement */
-#define log_fatal(format) if(logp(LOG_LEVEL_FATAL_DEF))write(logu,format)trim(logl(LOG_LEVEL_FATAL_DEF,__FILE__,__LINE__))//" ",
-#define log_error(format) if(logp(LOG_LEVEL_ERROR_DEF))write(logu,format)trim(logl(LOG_LEVEL_ERROR_DEF,__FILE__,__LINE__))//" ",
-#define log_warn(format) if(logp(LOG_LEVEL_WARN_DEF))write(logu,format)trim(logl(LOG_LEVEL_WARN_DEF,__FILE__,__LINE__))//" ",
-#define log_info(format) if(logp(LOG_LEVEL_INFO_DEF))write(logu,format)trim(logl(LOG_LEVEL_INFO_DEF,__FILE__,__LINE__))//" ",
+#define log(level,format) if(logp(level))write(logu,format)trim(logl(level,__FILE__,__LINE__))//" ",
+#define log_root(level,format) if(logp(level,0))write(logu,format)trim(logl(level,__FILE__,__LINE__))//" ",
+
+/* First four log levels */
+#define log_fatal(format) log(LOG_LEVEL_FATAL_DEF,format)
+#define log_error(format) log(LOG_LEVEL_ERROR_DEF,format)
+#define log_warn(format) log(LOG_LEVEL_WARN_DEF,format)
+#define log_info(format) log(LOG_LEVEL_INFO_DEF,format)
+
+#define log_fatal_root(format) log_root(LOG_LEVEL_FATAL_DEF,format)
+#define log_error_root(format) log_root(LOG_LEVEL_ERROR_DEF,format)
+#define log_warn_root(format) log_root(LOG_LEVEL_WARN_DEF,format)
+#define log_info_root(format) log_root(LOG_LEVEL_INFO_DEF,format)
 
 #ifdef DISABLE_LOG_DEBUG
-#define log_debug(format) if(.false.)write(logu,format)trim(logl(LOG_LEVEL_DEBUG_DEF,__FILE__,__LINE__))//" ",
+#define log_debug(format) if(.false.)write(logu,format)
+#define log_debug_root(format) if(.false.)write(logu,format)
 #else
-#define log_debug(format) if(logp(LOG_LEVEL_DEBUG_DEF))write(logu,format)trim(logl(LOG_LEVEL_DEBUG_DEF,__FILE__,__LINE__))//" ",
+#define log_debug(format) log(LOG_LEVEL_DEBUG_DEF,format)
+#define log_debug_root(format) log_root(LOG_LEVEL_DEBUG_DEF,format)
 #endif
 
 #ifdef ENABLE_LOG_TRACE
-#define log_trace(format) if(logp(LOG_LEVEL_TRACE_DEF))write(logu,format)trim(logl(LOG_LEVEL_TRACE_DEF,__FILE__,__LINE__))//" ",
+#define log_trace(format) log(LOG_LEVEL_TRACE_DEF,format)
+#define log_trace_root(format) log_root(LOG_LEVEL_TRACE_DEF,format)
 #else
-#define log_trace(format) if(.false.)write(logu,format)trim(logl(LOG_LEVEL_TRACE_DEF,__FILE__,__LINE__))//" ",
-#endif
-
-
-
-#define log_root_fatal(format) if(logp(LOG_LEVEL_FATAL_DEF,0))write(logu,format)trim(logl(LOG_LEVEL_FATAL_DEF,__FILE__,__LINE__))//" ",
-#define log_root_error(format) if(logp(LOG_LEVEL_ERROR_DEF,0))write(logu,format)trim(logl(LOG_LEVEL_ERROR_DEF,__FILE__,__LINE__))//" ",
-#define log_root_warn(format) if(logp(LOG_LEVEL_WARN_DEF,0))write(logu,format)trim(logl(LOG_LEVEL_WARN_DEF,__FILE__,__LINE__))//" ",
-#define log_root_info(format) if(logp(LOG_LEVEL_INFO_DEF,0))write(logu,format)trim(logl(LOG_LEVEL_INFO_DEF,__FILE__,__LINE__))//" ",
-
-#ifdef DISABLE_LOG_DEBUG
-#define log_root_debug(format) if(.false.)write(logu,format)trim(logl(LOG_LEVEL_DEBUG_DEF,__FILE__,__LINE__))//" ",
-#else
-#define log_root_debug(format) if(logp(LOG_LEVEL_DEBUG_DEF,0))write(logu,format)trim(logl(LOG_LEVEL_DEBUG_DEF,__FILE__,__LINE__))//" ",
-#endif
-
-#ifdef ENABLE_LOG_TRACE
-#define log_root_trace(format) if(logp(LOG_LEVEL_TRACE_DEF,0))write(logu,format)trim(logl(LOG_LEVEL_TRACE_DEF,__FILE__,__LINE__))//" ",
-#else
-#define log_root_trace(format) if(.false.)write(logu,format)trim(logl(LOG_LEVEL_TRACE_DEF,__FILE__,__LINE__))//" ",
+#define log_trace(format) if(.false.)write(logu,format)
+#define log_trace_root(format) if(.false.)write(logu,format)
 #endif

@@ -73,12 +73,12 @@ This can also be circumvented by compiling with `-ffree-line-length-none` or equ
 
 # Examples
 ```fortran
-log(err,*) "this is an error"
-log(warn,*) "this is a warning"
-log(info,*) "here, have some info"
-log(debug,*) "and this is a debug message"
+log_error(*) "this is an error"
+log_warn(*) "this is a warning"
+log_info(*) "here, have some info"
+log_debug(*) "and this is a debug message"
 ```
-outputs (with default compilation flag)
+outputs (without any compilation flags)
 ```
  localhost test.f90:9  ERROR this is an error
  localhost test.f90:10  WARN this is a warning
