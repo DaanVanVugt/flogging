@@ -15,6 +15,6 @@ program test_log
 
   ! Enable date output
   call log_set_output_date(.true.)
-  log_error(*) "Error from thread 0 with line-info and mpi id and date"
+  log_error(*) "Error from thread 0 with date"
 
 end program

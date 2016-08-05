@@ -1,8 +1,4 @@
 !**************************************************************
-! Copyright Daan van Vugt
-!
-! See README for usage information.
-!
 ! This module contains a logging system intended for use in MPI
 ! codes, with facilities for colored output, log level filters,
 ! code location and date and time annotation.
@@ -10,6 +6,7 @@
 ! This software is governed by the MIT license, found in the
 ! file LICENSE.
 !**************************************************************
+#include "flogging.h"
 module flogging
   use :: vt100 ! For color output
 
@@ -24,16 +21,16 @@ module flogging
   implicit none
 
   ! Log levels
-  integer, public, parameter :: NUM_LOG_LEVELS = 6
-  integer, public, parameter :: LOG_FATAL = 1,& !< Runtime error causing termination
-                                LOG_ERROR = 2,& !< Runtime error
-                                LOG_WARN  = 3,& !< Warning, but we can continue
-                                LOG_INFO  = 4,& !< Interesting events
-                                LOG_DEBUG = 5,& !< Detailed debug output, disable by compiling your program with -DDISABLE_LOG_DEBUG
-                                LOG_TRACE = 6   !< Extremely detailed output, compile your program with -DENABLE_LOG_TRACE
+  integer, public, parameter :: NUM_LOG_LEVELS = 6 !< 1 through 6 (fatal through trace)
+  integer, public, parameter :: LOG_FATAL = LOG_LEVEL_FATAL_DEF !< = 1, Runtime error causing termination
+  integer, public, parameter :: LOG_ERROR = LOG_LEVEL_ERROR_DEF !< = 2, Runtime error
+  integer, public, parameter :: LOG_WARN  = LOG_LEVEL_WARN_DEF !< = 3, Warning, but we can continue
+  integer, public, parameter :: LOG_INFO  = LOG_LEVEL_INFO_DEF !< = 4, Interesting events
+  integer, public, parameter :: LOG_DEBUG = LOG_LEVEL_DEBUG_DEF !< = 5, Detailed debug output, disable by compiling your program with -DDISABLE_LOG_DEBUG
+  integer, public, parameter :: LOG_TRACE = LOG_LEVEL_TRACE_DEF   !< = 6, Extremely detailed output, compile your program with -DENABLE_LOG_TRACE to enable
 
-  integer, public, save :: logu = stderr ! By default, log to stderr
-  integer, public, save :: minimum_log_level   = 4 !< Note that more critical means a lower number
+  integer, public, save :: logu = stderr !< By default, log to stderr
+  integer, public, save :: minimum_log_level = LOG_INFO !< Note that more critical means a lower number
 
 
   public :: log_set_output_hostname
@@ -105,21 +102,18 @@ contains
 
   !> Whether or not to skip the terminal check
   subroutine log_set_skip_terminal_check(bool)
-    implicit none
     logical, intent(in) :: bool
     skip_terminal_check = bool
   end subroutine log_set_skip_terminal_check
 
   !> Disable colors altogether
   subroutine log_set_disable_colors(bool)
-    implicit none
     logical, intent(in) :: bool
     disable_colors = bool
   end subroutine log_set_disable_colors
 
   !> Disable reading arguments from the commandline
   subroutine log_disable_cli_arguments()
-    implicit none
     cla_checked = .true.
   end subroutine
 
@@ -133,7 +127,6 @@ contains
 #ifdef USE_MPI
     use mpi
 #endif
-    implicit none
 
     integer, intent(in)           :: level     !< The log level of the current message
     integer, intent(in), optional :: only_n    !< Show only if the current mpi rank equals only_n
@@ -142,6 +135,9 @@ contains
 #ifdef USE_MPI
     integer :: rank, ierr
 #endif
+
+    ! Check command-line arguments if that has not been done yet
+    if (.not. cla_checked) call log_check_cli_arguments()
 
     if (level .le. minimum_log_level) then
       logp = .true.
@@ -159,7 +155,6 @@ contains
   !> Write a log lead containing level and optional info
   !> The name is shortened to allow for longer log messages without needing continuations
   function logl(level, filename, linenum)
-    implicit none
     ! Input parameters
     integer                    :: level    !< The log level
     character(len=*), optional :: filename !< An optional filename to add to the log lead
@@ -174,9 +169,6 @@ contains
 
     logical :: show_colors = .false.
     i = 1
-
-    ! Check command-line arguments if that has not been done yet
-    if (.not. cla_checked) call log_check_cli_arguments()
 
     ! Set level to 1 if it is too low, skip if too high
     if (level .lt. 1) level = 1
@@ -253,14 +245,12 @@ contains
   !*** Utility functions (private)
   !> Return the hostname in a 50 character string
   function log_hostname()
-    implicit none
     character(len=50) log_hostname
     call hostnm(log_hostname)
   end function log_hostname
 
   !> Return n spaces
   function spaces(n)
-    implicit none
     integer, intent(in) :: n !< Maximum is 30
     character(len=n)    :: spaces
     spaces = "                              "
@@ -268,7 +258,6 @@ contains
 
   !> Return the severity level with colors etc in a 50 char string
   function log_severity(level, show_colors)
-    implicit none
     integer, intent(in) :: level
     logical, intent(in) :: show_colors
     character(len=50) log_severity
@@ -300,7 +289,6 @@ contains
   !> Return the mpi id of the current process
   function log_mpi_id()
     use mpi
-    implicit none
     character(50) :: log_mpi_id    !< The mpi id part of a log
     character(6)  :: mpi_id_lj     !< MPI id in string
     character(4)  :: id_fmt        !< The forhmat to print mpi_id_lj in
@@ -320,7 +308,6 @@ contains
 
   !> Return the current date, formatted nicely
   function log_datetime()
-    implicit none
     character(50) :: log_datetime !< Output the date here
 
     character(8)  :: date
@@ -343,8 +330,6 @@ contains
   !> Check the command-line arguments to set the default logging level
   !> and color settings.
   subroutine log_check_cli_arguments()
-    implicit none
-
     integer :: i,length,status
     character(len=32) :: arg
     
@@ -353,12 +338,28 @@ contains
       call get_command_argument(i,arg,length,status)
       if (status .eq. 0) then
         select case (trim(arg))
-          case ("-v")
-            minimum_log_level = min(NUM_LOG_LEVELS,minimum_log_level+1)
           case ("--verbose")
             minimum_log_level = min(NUM_LOG_LEVELS,minimum_log_level+1)
+          case ("-v")
+            minimum_log_level = min(NUM_LOG_LEVELS,minimum_log_level+1)
+          case ("-vv")
+            minimum_log_level = min(NUM_LOG_LEVELS,minimum_log_level+2)
+          case ("-vvv")
+            minimum_log_level = min(NUM_LOG_LEVELS,minimum_log_level+3)
+          case ("-vvvv")
+            minimum_log_level = min(NUM_LOG_LEVELS,minimum_log_level+4)
+          case ("-vvvvv")
+            minimum_log_level = min(NUM_LOG_LEVELS,minimum_log_level+5)
           case ("-q")
             minimum_log_level = max(1,minimum_log_level-1)
+          case ("-qq")
+            minimum_log_level = max(1,minimum_log_level-2)
+          case ("-qqq")
+            minimum_log_level = max(1,minimum_log_level-3)
+          case ("-qqqq")
+            minimum_log_level = max(1,minimum_log_level-4)
+          case ("-qqqqq")
+            minimum_log_level = max(1,minimum_log_level-5)
           case ("--quiet")
             minimum_log_level = max(1,minimum_log_level-1)
           case ("--log-output-hostname")

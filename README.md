@@ -8,13 +8,12 @@ use flogging
 ```
 
 To load the logging module and its utility functions.
-To use the preprovided macros, include the header file and turn on the preprocessor by compiling with -cpp
+To use the preprovided macros, include the header file and turn on the preprocessor by compiling with `-cpp`
 ```C
 #include "flogging.h"
 ```
 This macro defines the following functions:
 ```fortran
-log(level, format)
 log_fatal(format)
 log_error(format)
 log_warn(format)
@@ -22,7 +21,6 @@ log_info(format)
 log_debug(format)
 log_trace(format)
 
-log_root(level, format)
 log_root_fatal(format)
 log_root_error(format)
 log_root_warn(format)
@@ -30,10 +28,10 @@ log_root_info(format)
 log_root_debug(format)
 log_root_trace(format)
 ```
-Where `format` is usually `*`, but can be adjusted to suit your needs. Remember to include a single `A` specifier for the log lead.
+Where `format` is usually `*`, but can be adjusted to suit your needs. Remember to include a single `A` specifier for the log lead if you set it yourself.
 
 The functions print a log message only if the level is greater than or equal to the current minimum loglevel.
-The second set of functions function includes a check to print a log message only from the root MPI process, if compiled
+The second functions include a check to print a log message only from the root MPI process, if compiled
 with `USE_MPI`. If not compiled with `USE_MPI`, it works the same as the log function.
 
 If you do not want to use the preprocessor macros, you can log like this.
@@ -52,6 +50,26 @@ make USE_MPI=1
 ```
 Then, place `libflogging.so` into your `LD_LIBRARY_PATH` and put `flogging.h` into your include path.
 
+## Compilation flags
+Compile your own code with
+```
+-DDISABLE_LOG_DEBUG
+```
+to remove any debug statements from your code. Note that you cannot use `-v` to get these back then.
+By default any `log_trace` messages are not included in the executable. Compile with
+```
+-DENABLE_LOG_TRACE
+```
+to get these back. Note that you still need to use `-vv` (by default) to see the messages.
+This is a good compilation flag to have in your debug build profile.
+
+## Transitioning to flogging
+You can change all of the messages in your application to the `log_info` level by
+```bash
+git sed 's/write ?(\*,\*)/log_info(*)/g'
+```
+You might need to split some lines, as the `__FILE__` and `__LINE__` macros require quite some space.
+This can also be circumvented by compiling with `-ffree-line-length-none` or equivalent.
 
 # Examples
 ```fortran
@@ -60,7 +78,7 @@ log(warn,*) "this is a warning"
 log(info,*) "here, have some info"
 log(debug,*) "and this is a debug message"
 ```
-outputs
+outputs (with default compilation flag)
 ```
  localhost test.f90:9  ERROR this is an error
  localhost test.f90:10  WARN this is a warning
@@ -105,6 +123,8 @@ Logging is to stderr by default. Another output unit can be selected by setting
 This will probably not work well with MPI.
 
 ## Internals
+The latest documentation can be found [here](http://exteris.github.io/flogging/).
+
 The module defines a function defining whether or not to print this log message,
 ```fortran
   logp(level)
@@ -116,3 +136,13 @@ This can be used to print messages only from the root thread, to prevent log mes
 ```fortran
   logp(level,0)
 ```
+
+## Contributing
+Pull requests and comments are appreciated.
+
+## TODO
+- Argument parsing is quite flaky (try -qqqqqq and see what happens)
+- Time and date output at the same time does not work yet
+- Compilation flag to control argument parsing
+- Log output to a different file per MPI process
+- Multiple logging streams/outputs (this will be tricky)
