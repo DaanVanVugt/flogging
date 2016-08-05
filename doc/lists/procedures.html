@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	 
+	 <meta name="description" content="FLOGGING -- Fortran logging system with MPI support">
+    
+    <meta name="author" content="Chris MacMackin" >
+    <link rel="icon" href="../favicon.png">
+
+    <title>
+All Procedures &ndash; flogging
+</title>
+
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/pygments.css" rel="stylesheet">
+    <link href="../css/font-awesome.min.css" rel="stylesheet">
+    <link href="../css/local.css" rel="stylesheet">
+    
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    
+    <script src="../js/jquery-2.1.3.min.js"></script>
+    <script src="../js/svg-pan-zoom.min.js"></script>
+
+    
+    <script src="../tipuesearch/tipuesearch_content.js"></script>
+    <link  href="../tipuesearch/tipuesearch.css" rel="stylesheet">
+    <script src="../tipuesearch/tipuesearch_set.js"></script>
+    <script src="../tipuesearch/tipuesearch.js"></script>
+    
+
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="../index.html">flogging </a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+				
+                
+            <li><a href="../lists/files.html">Source Files</a></li>
+				
+				
+            <li><a href="../lists/modules.html">Modules</a></li>
+				
+				
+            <li><a href="../lists/procedures.html">Procedures</a></li>
+				
+								
+				
+          </ul>
+        
+        <form action="../search.html" class="navbar-form navbar-right" role="search">
+        <div class="form-group">
+          <input type="text" class="form-control" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+        </div>
+<!--
+        <button type="submit" class="btn btn-default">Submit</button>
+-->
+        </form>
+        
+        </div><!--/.nav-collapse -->
+      </div>
+    </nav>
+
+    <div class="container">
+    
+      <div class="row">
+        <div class="col-lg-12" id='text'>
+			 <h1>Procedures</h1>
+			 <table class="table table-striped">
+			 <thead><tr><th>Procedure</th><th>Location</th><th>Procedure Type</th><th>Description</th></tr></thead>
+			 <tbody>
+			 
+			   <tr><td><a href='../proc/log_disable_cli_arguments.html'>log_disable_cli_arguments</a></td><td><a href='../module/flogging.html'>flogging</a></td><td>Subroutine</td><td><p>Disable reading arguments from the commandline</p></td></tr>
+			 
+			   <tr><td><a href='../proc/log_set_disable_colors.html'>log_set_disable_colors</a></td><td><a href='../module/flogging.html'>flogging</a></td><td>Subroutine</td><td><p>Disable colors altogether</p></td></tr>
+			 
+			   <tr><td><a href='../proc/log_set_output_date.html'>log_set_output_date</a></td><td><a href='../module/flogging.html'>flogging</a></td><td>Subroutine</td><td><p>Set the default for date output</p></td></tr>
+			 
+			   <tr><td><a href='../proc/log_set_output_fileline.html'>log_set_output_fileline</a></td><td><a href='../module/flogging.html'>flogging</a></td><td>Subroutine</td><td><p>Set the default for file/line output</p></td></tr>
+			 
+			   <tr><td><a href='../proc/log_set_output_hostname.html'>log_set_output_hostname</a></td><td><a href='../module/flogging.html'>flogging</a></td><td>Subroutine</td><td><p>Set the default for hostname output</p></td></tr>
+			 
+			   <tr><td><a href='../proc/log_set_output_severity.html'>log_set_output_severity</a></td><td><a href='../module/flogging.html'>flogging</a></td><td>Subroutine</td><td><p>Set the default for severity output</p></td></tr>
+			 
+			   <tr><td><a href='../proc/log_set_output_time.html'>log_set_output_time</a></td><td><a href='../module/flogging.html'>flogging</a></td><td>Subroutine</td><td><p>Set time-only date format</p></td></tr>
+			 
+			   <tr><td><a href='../proc/log_set_skip_terminal_check.html'>log_set_skip_terminal_check</a></td><td><a href='../module/flogging.html'>flogging</a></td><td>Subroutine</td><td><p>Whether or not to skip the terminal check</p></td></tr>
+			 
+			   <tr><td><a href='../proc/logl.html'>logl</a></td><td><a href='../module/flogging.html'>flogging</a></td><td>Function</td><td><p>Write a log lead containing level and optional info
+ The name is shortened to allow for longer log messages without needing continuations</p></td></tr>
+			 
+			   <tr><td><a href='../proc/logp.html'>logp</a></td><td><a href='../module/flogging.html'>flogging</a></td><td>Function</td><td><p>Output this log statement or not</p></td></tr>
+			 
+			   <tr><td><a href='../proc/stput.html'>stput</a></td><td><a href='../module/vt100.html'>vt100</a></td><td>Subroutine</td><td></td></tr>
+			 
+			   <tr><td><a href='../proc/tput.html'>tput</a></td><td><a href='../module/vt100.html'>vt100</a></td><td>Subroutine</td><td></td></tr>
+			 
+			 </tbody></table>
+             
+                <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.38.0 (20140413.2041)
+ -->
+<!-- Title: call~~graph~~CallGraph Pages: 1 -->
+<svg id="callgraphCallGraph" width="286pt" height="452pt"
+ viewBox="0.00 0.00 286.00 452.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="call~~graph~~CallGraph" class="graph" transform="scale(1 1) rotate(0) translate(4 448)">
+<title>call~~graph~~CallGraph</title>
+<polygon fill="white" stroke="none" points="-4,4 -4,-448 282,-448 282,4 -4,4"/>
+<!-- proc~tput -->
+<g id="call~~graph~~CallGraph_node1" class="node"><title>proc~tput</title>
+<g id="a_call~~graph~~CallGraph_node1"><a xlink:href="../proc/tput.html" xlink:title="tput">
+<polygon fill="#d9534f" stroke="#d9534f" points="102,-24 48,-24 48,-0 102,-0 102,-24"/>
+<text text-anchor="middle" x="75" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">tput</text>
+</a>
+</g>
+</g>
+<!-- proc~log_set_disable_colors -->
+<g id="call~~graph~~CallGraph_node2" class="node"><title>proc~log_set_disable_colors</title>
+<g id="a_call~~graph~~CallGraph_node2"><a xlink:href="../proc/log_set_disable_colors.html" xlink:title="log_set_disable_colors">
+<polygon fill="#d9534f" stroke="#d9534f" points="135.5,-66 14.5,-66 14.5,-42 135.5,-42 135.5,-66"/>
+<text text-anchor="middle" x="75" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">log_set_disable_colors</text>
+</a>
+</g>
+</g>
+<!-- proc~logp -->
+<g id="call~~graph~~CallGraph_node3" class="node"><title>proc~logp</title>
+<g id="a_call~~graph~~CallGraph_node3"><a xlink:href="../proc/logp.html" xlink:title="logp">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="102,-108 48,-108 48,-84 102,-84 102,-108"/>
+<text text-anchor="middle" x="75" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">logp</text>
+</a>
+</g>
+</g>
+<!-- mpi_comm_rank -->
+<g id="call~~graph~~CallGraph_node13" class="node"><title>mpi_comm_rank</title>
+<polygon fill="#777777" stroke="#777777" points="278,-108 186,-108 186,-84 278,-84 278,-108"/>
+<text text-anchor="middle" x="232" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">mpi_comm_rank</text>
+</g>
+<!-- proc~logp&#45;&gt;mpi_comm_rank -->
+<g id="call~~graph~~CallGraph_edge1" class="edge"><title>proc~logp&#45;&gt;mpi_comm_rank</title>
+<path fill="none" stroke="#ffff00" d="M102.294,-96C122.335,-96 150.644,-96 175.612,-96"/>
+<polygon fill="#ffff00" stroke="#ffff00" points="175.712,-99.5001 185.712,-96 175.712,-92.5001 175.712,-99.5001"/>
+</g>
+<!-- proc~log_set_output_time -->
+<g id="call~~graph~~CallGraph_node4" class="node"><title>proc~log_set_output_time</title>
+<g id="a_call~~graph~~CallGraph_node4"><a xlink:href="../proc/log_set_output_time.html" xlink:title="log_set_output_time">
+<polygon fill="#d9534f" stroke="#d9534f" points="129.5,-150 20.5,-150 20.5,-126 129.5,-126 129.5,-150"/>
+<text text-anchor="middle" x="75" y="-135.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">log_set_output_time</text>
+</a>
+</g>
+</g>
+<!-- proc~logl -->
+<g id="call~~graph~~CallGraph_node5" class="node"><title>proc~logl</title>
+<g id="a_call~~graph~~CallGraph_node5"><a xlink:href="../proc/logl.html" xlink:title="logl">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="102,-192 48,-192 48,-168 102,-168 102,-192"/>
+<text text-anchor="middle" x="75" y="-177.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">logl</text>
+</a>
+</g>
+</g>
+<!-- proc~stput -->
+<g id="call~~graph~~CallGraph_node6" class="node"><title>proc~stput</title>
+<g id="a_call~~graph~~CallGraph_node6"><a xlink:href="../proc/stput.html" xlink:title="stput">
+<polygon fill="#d9534f" stroke="#d9534f" points="259,-192 205,-192 205,-168 259,-168 259,-192"/>
+<text text-anchor="middle" x="232" y="-177.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">stput</text>
+</a>
+</g>
+</g>
+<!-- proc~logl&#45;&gt;proc~stput -->
+<g id="call~~graph~~CallGraph_edge2" class="edge"><title>proc~logl&#45;&gt;proc~stput</title>
+<path fill="none" stroke="#00ff00" d="M102.294,-180C127.644,-180 166.225,-180 194.537,-180"/>
+<polygon fill="#00ff00" stroke="#00ff00" points="194.837,-183.5 204.836,-180 194.836,-176.5 194.837,-183.5"/>
+</g>
+<!-- proc~log_set_skip_terminal_check -->
+<g id="call~~graph~~CallGraph_node7" class="node"><title>proc~log_set_skip_terminal_check</title>
+<g id="a_call~~graph~~CallGraph_node7"><a xlink:href="../proc/log_set_skip_terminal_check.html" xlink:title="log_set_skip_terminal_check">
+<polygon fill="#d9534f" stroke="#d9534f" points="150,-234 1.42109e-14,-234 1.42109e-14,-210 150,-210 150,-234"/>
+<text text-anchor="middle" x="75" y="-219.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">log_set_skip_terminal_check</text>
+</a>
+</g>
+</g>
+<!-- proc~log_disable_cli_arguments -->
+<g id="call~~graph~~CallGraph_node8" class="node"><title>proc~log_disable_cli_arguments</title>
+<g id="a_call~~graph~~CallGraph_node8"><a xlink:href="../proc/log_disable_cli_arguments.html" xlink:title="log_disable_cli_arguments">
+<polygon fill="#d9534f" stroke="#d9534f" points="144.5,-276 5.5,-276 5.5,-252 144.5,-252 144.5,-276"/>
+<text text-anchor="middle" x="75" y="-261.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">log_disable_cli_arguments</text>
+</a>
+</g>
+</g>
+<!-- proc~log_set_output_hostname -->
+<g id="call~~graph~~CallGraph_node9" class="node"><title>proc~log_set_output_hostname</title>
+<g id="a_call~~graph~~CallGraph_node9"><a xlink:href="../proc/log_set_output_hostname.html" xlink:title="log_set_output_hostname">
+<polygon fill="#d9534f" stroke="#d9534f" points="143,-318 7,-318 7,-294 143,-294 143,-318"/>
+<text text-anchor="middle" x="75" y="-303.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">log_set_output_hostname</text>
+</a>
+</g>
+</g>
+<!-- proc~log_set_output_date -->
+<g id="call~~graph~~CallGraph_node10" class="node"><title>proc~log_set_output_date</title>
+<g id="a_call~~graph~~CallGraph_node10"><a xlink:href="../proc/log_set_output_date.html" xlink:title="log_set_output_date">
+<polygon fill="#d9534f" stroke="#d9534f" points="130,-360 20,-360 20,-336 130,-336 130,-360"/>
+<text text-anchor="middle" x="75" y="-345.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">log_set_output_date</text>
+</a>
+</g>
+</g>
+<!-- proc~log_set_output_fileline -->
+<g id="call~~graph~~CallGraph_node11" class="node"><title>proc~log_set_output_fileline</title>
+<g id="a_call~~graph~~CallGraph_node11"><a xlink:href="../proc/log_set_output_fileline.html" xlink:title="log_set_output_fileline">
+<polygon fill="#d9534f" stroke="#d9534f" points="134.5,-402 15.5,-402 15.5,-378 134.5,-378 134.5,-402"/>
+<text text-anchor="middle" x="75" y="-387.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">log_set_output_fileline</text>
+</a>
+</g>
+</g>
+<!-- proc~log_set_output_severity -->
+<g id="call~~graph~~CallGraph_node12" class="node"><title>proc~log_set_output_severity</title>
+<g id="a_call~~graph~~CallGraph_node12"><a xlink:href="../proc/log_set_output_severity.html" xlink:title="log_set_output_severity">
+<polygon fill="#d9534f" stroke="#d9534f" points="138,-444 12,-444 12,-420 138,-420 138,-444"/>
+<text text-anchor="middle" x="75" y="-429.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">log_set_output_severity</text>
+</a>
+</g>
+</g>
+</g>
+</svg>
+</div>
+                <div><a type="button" class="graph-help" data-toggle="modal" href="#graph-help-text">Help</a></div>
+                <div class="modal fade" id="graph-help-text" tabindex="-1" role="dialog">
+                  <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                      </div>
+                      <div class="modal-body">
+                        
+Nodes of different colours represent the following:
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.38.0 (20140413.2041)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="641pt" height="26pt"
+ viewBox="0.00 0.00 641.00 25.98" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(0.811906 0.811906) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="none" points="-4,4 -4,-28 785.5,-28 785.5,4 -4,4"/>
+<!-- Module -->
+<g id="node1" class="node"><title>Module</title>
+<polygon fill="#337ab7" stroke="#337ab7" points="54,-24 0,-24 0,-0 54,-0 54,-24"/>
+<text text-anchor="middle" x="27" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Module</text>
+</g>
+<!-- Submodule -->
+<g id="node2" class="node"><title>Submodule</title>
+<polygon fill="#5bc0de" stroke="#5bc0de" points="139.5,-24 72.5,-24 72.5,-0 139.5,-0 139.5,-24"/>
+<text text-anchor="middle" x="106" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Submodule</text>
+</g>
+<!-- Type -->
+<g id="node3" class="node"><title>Type</title>
+<polygon fill="#5cb85c" stroke="#5cb85c" points="212,-24 158,-24 158,-0 212,-0 212,-24"/>
+<text text-anchor="middle" x="185" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Type</text>
+</g>
+<!-- Subroutine -->
+<g id="node4" class="node"><title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="294,-24 230,-24 230,-0 294,-0 294,-24"/>
+<text text-anchor="middle" x="262" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node5" class="node"><title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="366,-24 312,-24 312,-0 366,-0 366,-24"/>
+<text text-anchor="middle" x="339" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Interface -->
+<g id="node6" class="node"><title>Interface</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="439.5,-24 384.5,-24 384.5,-0 439.5,-0 439.5,-24"/>
+<text text-anchor="middle" x="412" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Interface</text>
+</g>
+<!-- Unknown Procedure Type -->
+<g id="node7" class="node"><title>Unknown Procedure Type</title>
+<polygon fill="#777777" stroke="#777777" points="594,-24 458,-24 458,-0 594,-0 594,-24"/>
+<text text-anchor="middle" x="526" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
+</g>
+<!-- Program -->
+<g id="node8" class="node"><title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="666,-24 612,-24 612,-0 666,-0 666,-24"/>
+<text text-anchor="middle" x="639" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node9" class="node"><title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="781.5,-24 684.5,-24 684.5,-0 781.5,-0 781.5,-24"/>
+<text text-anchor="middle" x="733" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+Where possible, edges connecting nodes are given different colours to make them
+easier to distinguish in large graphs.
+<h5>Module Graph</h5>
+<p>Solid arrows point from a parent (sub)module to the submodule which is
+descended from it. Dashed arrows point from a module being used to the
+module using it.</p>
+<h5>Type Graph</h5>
+<p>Solid arrows point from one derived type to another which extends
+(inherits from) it. Dashed arrows point from a derived type to another
+type containing it as a components, with a label listing the name(s) of
+said component(s).</p>
+<h5>Call Graph</h5>
+<p>Solid arrows point from a procedure to one which it calls. Dashed 
+arrows point from an interface to procedures which implement that interface.
+This could include the module procedures in a generic interface or the
+implementation in a submodule of an interface in a parent module.</p>
+
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+        </div>
+      </div>
+
+    <hr>
+    <footer>
+      <div class="row">
+        <div class="col-md-4">&copy; 2016 </div>
+        <div class="col-md-4"><span class="text-center"> flogging was developed by Daan van Vugt</span></div>
+        <div class="col-md-4">
+          <span class="pull-right">
+            Documentation generated by 
+            <a href="https://github.com/cmacmackin/ford">FORD</a>
+            
+          </span>
+        </div>
+      </div>
+      <br>
+    </footer>
+    </div> <!-- /container -->
+
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+<!--
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+-->
+    <script src="../js/bootstrap.min.js"></script>
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <script src="../js/ie10-viewport-bug-workaround.js"></script>
+
+    <!-- MathJax JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'AMS' } },
+        jax: ['input/TeX','input/MathML','output/HTML-CSS'],
+        extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js'],
+        'HTML-CSS': { 
+           styles: { '.MathJax_Display, .MathJax .mo, .MathJax .mi, .MathJax .mn': {color: '#000000 ! important'} }
+        }
+      });
+    </script>
+    <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  </body>
+</html>

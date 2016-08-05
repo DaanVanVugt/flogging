@@ -8,7 +8,7 @@ BUILD = $(SRC)
 
 
 FC = mpif90
-FLAGS = -fpic -O3 -cpp -ffree-line-length-none
+FLAGS = -fpic -O3 -cpp -ffree-line-length-none -Iinclude
 
 ifeq (USE_MPI,1)
 	FLAGS += -DUSE_MPI
@@ -32,3 +32,15 @@ test : src/flogging.f90 tests/test.f90 src/vt100.f90 include/flogging.h
 
 test_mpi : src/flogging.f90 tests/test_mpi.f90 src/vt100.f90 include/flogging.h
 	mpifort $(FLAGS) -DUSE_MPI -Iinclude src/vt100.f90 src/flogging.f90 tests/test_mpi.f90 -o test_mpi
+
+.PHONY: clean doc
+clean:
+	@find . -name '*.o' -delete
+	@find . -name '*.mod' -delete
+	@find . -name '*.so' -delete
+	@rm -f test test_mpi
+
+doc:
+	ford flogging.md
+doc_deploy: doc
+	git subtree push --prefix doc origin gh-pages
