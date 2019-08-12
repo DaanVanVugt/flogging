@@ -10,6 +10,10 @@
 module flogging
   use :: vt100 ! For color output
 
+#if defined __INTEL_COMPILER
+  use ifport
+#endif
+
 #ifdef f2003
   use, intrinsic :: iso_fortran_env, only: stdin=>input_unit, stdout=>output_unit, stderr=>error_unit
 #else
@@ -246,7 +250,12 @@ contains
   !> Return the hostname in a 50 character string
   function log_hostname()
     character(len=50) log_hostname
+#if defined __INTEL_COMPILER
+    integer(4) :: istat
+    istat = hostnm(log_hostname)
+#else
     call hostnm(log_hostname)
+#endif
   end function log_hostname
 
   !> Return n spaces
