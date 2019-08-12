@@ -170,6 +170,7 @@ contains
     integer                         :: fn_len  !< Add extra spaces after part i
     integer       :: i,j !< The counter for the different parts
     character(4)  :: linenum_lj ! left-justified line number
+    character(len=50) :: basename !< Basename stripped from filename
 
     logical :: show_colors = .false.
     i = 1
@@ -212,7 +213,8 @@ contains
 #endif
 
     if (present(filename) .and. output_fileline) then
-      log_tmp(i) = trim(log_tmp(i)) // trim(filename)
+      call strip_path(filename, basename)
+      log_tmp(i) = trim(log_tmp(i)) // trim(basename)
       if (present(linenum)) then
         ! Left-justify the line number and cap it to 4 characters
         write(linenum_lj, '(i4)') linenum
@@ -335,6 +337,18 @@ contains
       write(log_datetime, '(a,"/",a,"/",a," ")') date(1:4), date(5:6), date(7:8)
     endif
   end function log_datetime
+
+  subroutine strip_path(filepath, basename)
+    character(len=*), intent(in) :: filepath !< The path to be stripped
+    character(len=*), intent(out) :: basename !< The basename of the filepath
+
+    ! Internal parameters
+    character(len=1) :: sep = '/' !< The path separator
+    integer :: last_sep_idx
+
+    last_sep_idx = index(filepath, sep, .true.)
+    basename = filepath(last_sep_idx+1:)
+  end subroutine
 
   !> Check the command-line arguments to set the default logging level
   !> and color settings.
