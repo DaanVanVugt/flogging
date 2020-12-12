@@ -327,14 +327,15 @@ contains
 
     call date_and_time(date, time, zone)
     if (output_date .and. output_time) then
-      write(log_datetime, '(a,"/",a,"/",a," ",a,":",a,":",a," ")') date(1:4), date(5:6), date(7:8), &
-            time(1:2), time(3:4), time(5:6)
-    endif
-    if (output_time) then
-      write(log_datetime, '(a,":",a,":",a," ")') time(1:2), time(3:4), time(5:6)
-    endif
-    if (output_date) then
-      write(log_datetime, '(a,"/",a,"/",a," ")') date(1:4), date(5:6), date(7:8)
+      write(log_datetime, '(a,"/",a,"/",a," ",a,":",a,":",a,".",a," ")') date(1:4), date(5:6), date(7:8), &
+            time(1:2), time(3:4), time(5:6), time(8:10)
+    else
+      if (output_time) then
+        write(log_datetime, '(a,":",a,":",a,".",a," ")') time(1:2), time(3:4), time(5:6), time(8:10)
+      endif
+      if (output_date) then
+        write(log_datetime, '(a,"/",a,"/",a," ")') date(1:4), date(5:6), date(7:8)
+      endif
     endif
   end function log_datetime
 
@@ -343,7 +344,11 @@ contains
     character(len=*), intent(out) :: basename !< The basename of the filepath
 
     ! Internal parameters
+#ifndef WIN32
     character(len=1) :: sep = '/' !< The path separator
+#else
+    character(len=1) :: sep = '\'
+#endif
     integer :: last_sep_idx
 
     last_sep_idx = index(filepath, sep, .true.)
