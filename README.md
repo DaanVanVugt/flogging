@@ -206,6 +206,16 @@ This can be used to print messages only from the root thread, to prevent log mes
   logp(level,0)
 ```
 
+## Testing
+
+You can build a test program when invoking CMake and run it:
+
+```sh
+cmake -DBUILD_TESTING=ON ..
+make
+ctest
+```
+
 ## Contributing
 
 Pull requests and comments are appreciated.
