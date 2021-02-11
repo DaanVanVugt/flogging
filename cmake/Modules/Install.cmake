@@ -18,7 +18,7 @@ configure_package_config_file(
 # add version of the project to config
 write_basic_package_version_file(
         "${CMAKE_CURRENT_BINARY_DIR}/FloggingConfigVersion.cmake"
-        VERSION "${Flogging_VERSION_MAJOR}.${Flogging_VERSION_MINOR}.${Flogging_VERSION_PATCH}"
+        VERSION ${PROJECT_VERSION}
         COMPATIBILITY AnyNewerVersion
 )
 
