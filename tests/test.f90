@@ -7,7 +7,7 @@ program test_log
 
   log_error(*) "this is an error"
   log_warn(*) "this is a warning"
-  log_info(*) "here( have some info"
+  log_info(*) "here have some info"
   log_debug(*) "and this is a debug message"
 
   log_debug(*) "and this is a debug message 2"
