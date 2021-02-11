@@ -186,6 +186,12 @@ This will probably not work well with MPI.
 
 The latest documentation can be found [here](http://exteris.github.io/flogging/).
 
+You can build the documentation with Ford, or directly when building the project:
+
+```sh
+make doc
+```
+
 The module defines a function defining whether or not to print this log message,
 
 ```fortran
