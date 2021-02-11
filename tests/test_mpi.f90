@@ -17,7 +17,7 @@ program test_log
   log_root_error(*) "this is a warning"
 
   ! Enable date output
-  call log_set_default_output_date(.true.)
+  call log_set_output_date(.true.)
   log_root_error(*) "Error from thread 0 with line-info and mpi id and date"
 
   call MPI_Finalize(ierr)
