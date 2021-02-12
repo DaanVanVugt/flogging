@@ -15,7 +15,7 @@ target_include_directories(
         PUBLIC
                 "$<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>"
         INTERFACE
-                "$<INSTALL_INTERFACE:include>"
+                $<INSTALL_INTERFACE:include>
 )
 
 set_target_properties(
@@ -24,20 +24,17 @@ set_target_properties(
                 Fortran_PREPROCESS ON
 )
 
-# special rules for MPI build
-if(USE_MPI)
-        target_compile_definitions(
-                flogging
-                PRIVATE
-                        USE_MPI
-        )
+target_compile_definitions(
+        flogging
+        PRIVATE
+                $<$<BOOL:${USE_MPI}>:USE_MPI>
+)
 
-        target_link_libraries(
-                flogging
-                PUBLIC
-                        MPI::MPI_Fortran
-        )
-endif()
+target_link_libraries(
+        flogging
+        PUBLIC
+                $<$<BOOL:${USE_MPI}>:MPI::MPI_Fortran>
+)
 
 # install instructions for library
 install(
