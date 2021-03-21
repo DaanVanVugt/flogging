@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.1.0)
+cmake_minimum_required(VERSION 3.11.0)
 
 project(
         Flogging
@@ -25,6 +25,7 @@ include(CMakePackageConfigHelpers)
 include(Install)
 include(Options)
 
+# include code
 add_subdirectory(src)
 add_subdirectory(doc EXCLUDE_FROM_ALL)
 
