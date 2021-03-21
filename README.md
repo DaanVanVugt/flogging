@@ -84,7 +84,7 @@ This will also install CMake scripts to use the library in other CMake projects 
 find_package(Flogging)
 
 add_library(mylib ...)
-target_link_libraries(mylib PRIVATE Flogging::flogging)
+target_link_libraries(mylib PRIVATE Flogging::Flogging)
 ```
 
 ## Compilation flags

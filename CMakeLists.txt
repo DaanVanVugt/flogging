@@ -6,8 +6,8 @@ project(
         LANGUAGES Fortran
 )
 
-# append custom CMake modules directory
-list(PREPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/Modules")
+# prepend custom CMake modules directory
+list(PREPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules")
 
 # set destination for binaries, libraries, Fortran modules and generated doc
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")

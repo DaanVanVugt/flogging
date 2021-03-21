@@ -15,7 +15,7 @@ set_target_properties(
 target_link_libraries(
         log-test
         PRIVATE
-                flogging
+                Flogging
                 $<$<BOOL:${USE_MPI}>:MPI::MPI_Fortran>
 )
 

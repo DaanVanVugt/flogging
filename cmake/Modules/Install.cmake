@@ -3,7 +3,7 @@ install(
         EXPORT FloggingTargets
         FILE FloggingTargets.cmake
         DESTINATION lib/cmake/Flogging
-        NAMESPACE "${PROJECT_NAME}::"
+        NAMESPACE "Flogging::"
 )
 
 # generate config
