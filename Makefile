@@ -28,10 +28,10 @@ $(BUILD)/flogging.o: $(BUILD)/vt100.o
 # Some test executables
 #
 test : src/flogging.f90 tests/test.f90 src/vt100.f90 include/flogging.h
-	mpifort $(FLAGS) -Iinclude src/vt100.f90 src/flogging.f90 tests/test.f90 -o test
+	$(FC) $(FLAGS) -Iinclude src/vt100.f90 src/flogging.f90 tests/test.f90 -o test
 
 test_mpi : src/flogging.f90 tests/test_mpi.f90 src/vt100.f90 include/flogging.h
-	mpifort $(FLAGS) -DUSE_MPI -Iinclude src/vt100.f90 src/flogging.f90 tests/test_mpi.f90 -o test_mpi
+	$(FC) $(FLAGS) -DUSE_MPI -Iinclude src/vt100.f90 src/flogging.f90 tests/test_mpi.f90 -o test_mpi
 
 .PHONY: clean doc warning
 clean:
