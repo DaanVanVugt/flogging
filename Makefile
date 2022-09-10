@@ -17,7 +17,7 @@ endif
 SOURCES = $(wildcard $(SRC)/*$(F90))
 OBJS = $(patsubst $(SRC)/%$(F90), $(BUILD)/%$(OBJ), $(SOURCES))
 
-$(LIB): $(OBJS)
+$(LIB): warning $(OBJS)
 	$(FC) -shared -o $(LIB) $(OBJS)
 
 $(BUILD)/%$(OBJ): $(SRC)/%$(F90)
@@ -28,12 +28,12 @@ $(BUILD)/flogging.o: $(BUILD)/vt100.o
 # Some test executables
 #
 test : src/flogging.f90 tests/test.f90 src/vt100.f90 include/flogging.h
-	mpifort $(FLAGS) -Iinclude src/vt100.f90 src/flogging.f90 tests/test.f90 -o test
+	$(FC) $(FLAGS) -Iinclude src/vt100.f90 src/flogging.f90 tests/test.f90 -o test
 
 test_mpi : src/flogging.f90 tests/test_mpi.f90 src/vt100.f90 include/flogging.h
-	mpifort $(FLAGS) -DUSE_MPI -Iinclude src/vt100.f90 src/flogging.f90 tests/test_mpi.f90 -o test_mpi
+	$(FC) $(FLAGS) -DUSE_MPI -Iinclude src/vt100.f90 src/flogging.f90 tests/test_mpi.f90 -o test_mpi
 
-.PHONY: clean doc
+.PHONY: clean doc warning
 clean:
 	@find . -name '*.o' -delete
 	@find . -name '*.mod' -delete
@@ -44,3 +44,9 @@ doc:
 	ford flogging.md
 doc_deploy: doc
 	git subtree push --prefix doc origin gh-pages
+
+warning:
+	@echo "+--------------------------------------------------------------+"
+	@echo "| It is strongly recommended to use CMake to build the project |"
+	@echo "|                      Check README.md                         |"
+	@echo "+--------------------------------------------------------------+"
